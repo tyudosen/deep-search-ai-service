@@ -1,7 +1,5 @@
-import { Effect, Layer, pipe } from "effect";
+import { Effect, pipe } from "effect";
 import { HttpApiBuilder } from "@effect/platform";
-import { DeepResearchApi } from "../api/deep-research.js";
-import { appLayers } from "../services/runtime.js";
 import { Ai } from "../services/Ai.js";
 import { HttpApiDecodeError } from "@effect/platform/HttpApiError";
 import type { Research } from "../constants/index.js";
@@ -9,6 +7,7 @@ import { SEARCH_CONFIG, PROMPTS } from "../constants/index.js";
 import { AiModels } from "../services/AiModels.js";
 import { generateReport } from "../services/utils.js";
 import { WebSearch } from "../services/WebSearch.js";
+import { Api } from "../api/index.js";
 
 const deepResearch: (
 	prompt: string,
@@ -100,38 +99,38 @@ const deepResearch: (
 
 
 
-export const DeepResearchApiGroupLive = HttpApiBuilder.group(DeepResearchApi, "DeepResearchApiGroup", (handlers) =>
-	handlers.handle(
-		"research",
-		({ urlParams }) => {
-			const prompt = urlParams.query
-			let research: any = {};
-			const program = pipe(
-				prompt,
-				deepResearch,
-				Effect.tap((res) => { research = res; return; }),
-				Effect.flatMap((research) => generateReport(research, {
-					calledFrom: 'index.ts'
-				}))
-			)
+export const DeepResearchApiGroupLive = HttpApiBuilder.group(Api, "DeepResearchApiGroup", (handlers) =>
+	handlers
+		.handle(
+			"research",
+			({ urlParams }) => {
+				const prompt = urlParams.query
+				let research: any = {};
+				const program = pipe(
+					prompt,
+					deepResearch,
+					Effect.tap((res) => { research = res; return; }),
+					Effect.flatMap((research) => generateReport(research, {
+						calledFrom: 'index.ts'
+					}))
+				)
 
-			const response = pipe(
-				program,
-				Effect.flatMap((res) => Effect.succeed({
-					research,
-					report: res
-				})),
-				Effect.mapError((e) => new HttpApiDecodeError({
-					issues: [],
-					message: e.message
-				}))
+				const response = pipe(
+					program,
+					Effect.flatMap((res) => Effect.succeed({
+						research,
+						report: res
+					})),
+					Effect.mapError((e) => new HttpApiDecodeError({
+						issues: [],
+						message: e.message
+					}))
 
-			)
+				)
 
-			return response
+				return response
 
-		}
-	)
-).pipe(Layer.provide(appLayers));
+			}
+		)
+)
 
-export const DeepResearchApiLive = HttpApiBuilder.api(DeepResearchApi).pipe(Layer.provide(DeepResearchApiGroupLive));

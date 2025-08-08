@@ -31,3 +31,14 @@ jobs:
     
     - name: Run TypeScript typecheck
       run: pnpm run typecheck
+    
+    - name: Check for explicit .js imports
+      run: |
+        echo "Checking for missing .js extensions in imports..."
+        # Check for relative imports without .js extension
+        if grep -r --include="*.ts" --include="*.js" --include="*.mts" -E "import.*from\s+['\"]\.\/.*[^\.js]['\"]" src/; then
+          echo "❌ Found imports missing .js extension"
+          echo "Please add .js extension to all relative imports for ES module compatibility"
+          exit 1
+        fi
+        echo "✅ All relative imports have explicit .js extensions"

@@ -7,7 +7,9 @@ export const env = createEnv({
 		EXA_API_KEY: z.string().min(1),
 		LANGFUSE_SECRET_KEY: z.string().min(1),
 		LANGFUSE_PUBLIC_KEY: z.string().min(1),
-		LANGFUSE_BASEURL: z.string().url()
+		LANGFUSE_BASEURL: z.string().url(),
+		WORKOS_CLIENT_ID: z.string().min(1),
+		WORKOS_API_KEY: z.string().min(1)
 	},
 
 	/**
