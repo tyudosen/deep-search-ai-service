@@ -1,5 +1,6 @@
-import { HttpApi, HttpApiEndpoint, HttpApiGroup } from "@effect/platform";
+import { HttpApiEndpoint, HttpApiGroup } from "@effect/platform";
 import { Schema } from "effect";
+import { Authentication } from "../middleware/authentication";
 
 export class DeepResearchApiGroup extends HttpApiGroup.make("DeepResearchApiGroup")
 	.add(
@@ -12,6 +13,7 @@ export class DeepResearchApiGroup extends HttpApiGroup.make("DeepResearchApiGrou
 			)
 			.addSuccess(Schema.Any)
 	)
+	.middleware(Authentication)
 { }
 
 
