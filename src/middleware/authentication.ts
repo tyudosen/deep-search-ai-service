@@ -1,6 +1,6 @@
 import { HttpApiMiddleware, HttpApiSchema, HttpApiSecurity } from "@effect/platform";
 import { Config, Effect, Layer, Redacted, Schema } from "effect";
-import { Auth } from "../services/Auth";
+import { Auth } from "../services/Auth.js";
 import type { AuthenticateWithSessionCookieFailedResponse } from "@workos-inc/node";
 
 class Unauthorized extends Schema.TaggedError<Unauthorized>()(
