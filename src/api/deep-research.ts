@@ -1,6 +1,6 @@
 import { HttpApiEndpoint, HttpApiGroup } from "@effect/platform";
 import { Schema } from "effect";
-import { Authentication } from "../middleware/authentication";
+import { Authentication } from "../middleware/authentication.js";
 
 export class DeepResearchApiGroup extends HttpApiGroup.make("DeepResearchApiGroup")
 	.add(
